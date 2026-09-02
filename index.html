@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Cell 3D Coordinate Picker</title>
+    
+    <!-- เรียกใช้งานไลบรารี model-viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
+    <style>
+        body { margin: 0; background-color: #121216; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; color: white; }
+        
+        model-viewer {
+            width: 100vw;
+            height: 100vh;
+            --poster-color: transparent;
+        }
+
+        /* แผงควบคุมแสดงพิกัดด้านบน */
+        #coord-panel {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 30, 0.9); border: 2px solid #ff33cc; padding: 15px 25px;
+            border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(255, 51, 204, 0.3);
+            z-index: 100; pointer-events: none;
+        }
+        #coord-title { font-size: 14px; color: #888; margin-bottom: 5px; }
+        #coord-value { font-size: 20px; font-weight: bold; color: #ff33cc; font-family: monospace; }
+        #copy-status { font-size: 12px; color: #00ffcc; margin-top: 5px; height: 15px; }
+    </style>
+</head>
+<body>
+
+    <div id="coord-panel">
+        <div id="coord-title">🎯 พิกัดจุดเซลล์สัตว์ (คัดลอกให้อัตโนมัติแล้ว)</div>
+        <div id="coord-value">คลิกซ้ายบนโมเดล 3D ได้เลย</div>
+        <div id="copy-status"></div>
+    </div>
+
+    <!-- โหลดโมเดลเซลล์สัตว์ของคุณ -->
+    <model-viewer 
+        id="cell-model" 
+        src="animalcellCOLOR2.blend" 
+        alt="3D Animal Cell Model"
+        camera-controls
+        auto-rotate
+        shadow-intensity="1">
+    </model-viewer>
+
+    <script>
+        const modelViewer = document.querySelector('#cell-model');
+        const coordValue = document.querySelector('#coord-value');
+        const copyStatus = document.querySelector('#copy-status');
+
+        modelViewer.addEventListener('click', (event) => {
+            // คำนวณหาตำแหน่งพิกัด X, Y, Z บนโมเดล 3D จากจุดที่เมาส์คลิก
+            const hit = modelViewer.positionAndNormalFromPoint(event.clientX, event.clientY);
+            
+            if (hit) {
+                const x = hit.position.x.toFixed(2);
+                const y = hit.position.y.toFixed(2);
+                const z = hit.position.z.toFixed(2);
+                
+                const resultString = `data-position="${x} ${y} ${z}"`;
+                
+                // แสดงผลบนจอ
+                coordValue.innerText = resultString;
+                
+                // คัดลอกลงคลิปบอร์ดอัตโนมัติ
+                navigator.clipboard.writeText(resultString).then(() => {
+                    copyStatus.innerText = "📋 คัดลอกลงคลิปบอร์ดเรียบร้อยแล้ว! (กด Ctrl+V วางได้เลย)";
+                    setTimeout(() => { copyStatus.innerText = ""; }, 3000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
