@@ -9,22 +9,23 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-    
+        
+        body { 
+            margin: 0; 
+            padding: 0;
+            background-color: #2b2b2b; /* สีพื้นหลังหน้าเว็บ เปลี่ยนได้ตามชอบ */
+            overflow: hidden; /* ป้องกันหน้าจอเลื่อนได้ */
+        }
         
         /* ตั้งค่ากล่อง 3 มิติ */
         model-viewer {
             width: 100vw;
-            height: 70vh;
-            background-color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            height: 100vh; /* ปรับให้เต็มจอ 100% แทน 70vh */
+            background-color: transparent; /* เอาพื้นขาวออก */
+            outline: none;
+            /* เอา box-shadow เงากระดาษออกไปแล้ว */
         }
 
-        /* ตั้งค่าแผงควบคุมและแสดงผลด้านล่าง */
-    
-
-
-
-    
         #coordinate-box:active {
             transform: scale(0.98);
         }
@@ -98,6 +99,7 @@
         camera-controls
         ar
         ar-modes="webxr scene-viewer quick-look"
+        shadow-intensity="1">
         
         <!-- 1. แวคคิวโอล -->
         <button slot="hotspot-vacuole" class="hotspot-btn" data-position="2.0165 0.0569 0.0153" data-normal="0 1 0">
