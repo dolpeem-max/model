@@ -3,81 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive 3D Cell</title>
+    <title>หาพิกัดโครงสร้างเซลล์ (3D Model)</title>
     
-    <!-- เรียกใช้งานไลบรารี model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-        body { margin: 0; background-color: #1e1e24; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
-        
-        model-viewer {
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        /* กำหนดขนาดของกล่องแสดงโมเดล 3 มิติ */
+        #my-model {
             width: 100vw;
-            height: 100vh;
-            --poster-color: transparent;
+            height: 75vh;
+            background-color: #ffffff;
+            outline: none;
         }
-
-        /* ปุ่มสำหรับผู้พัฒนา (คลิกเพื่อหาพิกัด) */
-        #dev-helper {
-            position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #00ffcc;
-            padding: 10px; border-radius: 8px; font-size: 12px; z-index: 100; font-family: monospace;
+        /* ตกแต่งกล่องข้อความแสดงผล */
+        .info-panel {
+            margin-top: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
         }
-
-        /* ปุ่ม AR ด้านล่าง */
-        #ar-button {
-            background-color: #ffffff; color: #333; border-radius: 20px; border: none;
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            padding: 12px 24px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            cursor: pointer; z-index: 10;
+        #coord-result {
+            font-size: 1.2em;
+            color: #d93025;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background: #fce8e6;
+            border-radius: 4px;
+            user-select: all; /* ทำให้กดคลิกทีเดียวแล้วคลุมดำก๊อปปี้ได้ง่าย */
         }
     </style>
 </head>
 <body>
 
-    <!-- กล่องแสดงพิกัดสำหรับ Developer -->
-    <div id="dev-helper">คลิกบนโมเดลเพื่อหาพิกัด X Y Z<br><span id="coords">ยังไม่ได้คลิก</span></div>
-
-    <!-- โหลดโมเดลเซลล์ (แก้ไขชื่อไฟล์เป็น cell.glb ตามที่ต้องการ) -->
     <model-viewer 
-        id="cell-model" 
+        id="my-model" 
         src="cell.glb" 
-        alt="3D Cell Model" 
         camera-controls 
-        auto-rotate 
-        ar 
-        ar-modes="webxr scene-viewer quick-look" 
-        shadow-intensity="1">
-        
-        <button slot="ar-button" id="ar-button">
-            👁️ ดูโมเดล AR
-        </button>
+        shadow-intensity="1"
+        alt="โมเดลเซลล์ 3 มิติ">
     </model-viewer>
 
+    <div class="info-panel">
+        <p>🔄 สามารถใช้เมาส์หรือนิ้ว หมุนและซูมดูโมเดลได้เลย</p>
+        <p>👇 <b>คลิกที่ส่วนต่างๆ ของเซลล์เพื่อดึงพิกัด</b> 👇</p>
+        <div id="coord-result">ยังไม่ได้คลิกโมเดล</div>
+        <p style="font-size: 0.85em; color: gray;">(คัดลอกข้อความสีแดงไปใช้สร้างจุดคลิกในขั้นตอนต่อไปได้เลยครับ)</p>
+    </div>
+
     <script>
-        const modelViewer = document.querySelector('#cell-model');
-        const coordSpan = document.querySelector('#coords');
+        const modelViewer = document.querySelector('#my-model');
+        const resultDiv = document.querySelector('#coord-result');
 
-        // สคริปต์หาพิกัดเมื่อคลิกบนโมเดล
+        // ตรวจจับเมื่อมีการคลิกที่ตัวโมเดล
         modelViewer.addEventListener('click', (event) => {
-            const hit = modelViewer.positionAndNormalFromPoint(event.clientX, event.clientY);
-            
-            if (hit) {
-                const x = hit.position.x.toFixed(2);
-                const y = hit.position.y.toFixed(2);
-                const z = hit.position.z.toFixed(2);
-                
-                const resultString = `data-position="${x} ${y} ${z}"`;
-                coordSpan.innerText = resultString;
-                
-                // คัดลอกลงคลิปบอร์ดอัตโนมัติ
-                navigator.clipboard.writeText(resultString).then(() => {
-                    const originalText = coordSpan.innerText;
-                    coordSpan.innerText = resultString + " (คัดลอกแล้ว!)";
-                    setTimeout(() => { coordSpan.innerText = originalText; }, 2000);
-                });
-            }
-        });
-    </script>
+            // ดึงตำแหน่งที่เมาส์คลิกบนหน้าจอ
+            const rect = modelViewer.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
 
-</body>
-</html>
+            // ให้โมเดลคำนวณว่าจุดที่คลิก ตรงกับพิกัด X Y Z อะไรบนตัว 3D
+            const hit = modelViewer.positionAndNormalFromPoint(x, y);
+
+            if (hit != null) {
+                // ถ้าคลิกโดนโมเดล ให้ดึงค่า XYZ ออกมา (ปัดเศษทศนิยม 4 ตำแหน่ง)
+                const posX = hit
