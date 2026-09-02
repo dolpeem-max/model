@@ -193,60 +193,6 @@
         </button>
     </model-viewer>
 
-    <!-- แผงควบคุมและแสดงผลด้านล่าง (ส่วนที่ถูกเพิ่มเข้ามาเพื่อให้ UI สมบูรณ์) -->
-    <div class="panel">
-        <div class="instruction">คลิกที่ส่วนต่างๆ ของโมเดลเพื่อดูพิกัด (คลิกที่กล่องเพื่อคัดลอก)</div>
-        <div id="coordinate-box">รอการคลิกบนโมเดล...</div>
-    </div>
-
-    <!-- โค้ดประมวลผล JavaScript -->
-    <script>
-        const modelViewer = document.querySelector('#cell-model');
-        const coordBox = document.querySelector('#coordinate-box');
-
-        modelViewer.addEventListener('click', (event) => {
-            // ดึงพิกัดการคลิกบนหน้าจอ
-            const rect = modelViewer.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            // แปลงพิกัดหน้าจอเป็นพิกัด 3 มิติบนโมเดล
-            const hit = modelViewer.positionAndNormalFromPoint(x, y);
-
-            if (hit != null) {
-                // ปัดเศษทศนิยมให้ดูสะอาดตา
-                const px = hit.position.x.toFixed(4);
-                const py = hit.position.y.toFixed(4);
-                const pz = hit.position.z.toFixed(4);
-                
-                // สร้างชุดข้อความพิกัด
-                const positionData = `${px} ${py} ${pz}`;
-                coordBox.innerText = `data-position="${positionData}"`;
-                
-                // ฟังก์ชันกดแล้วคัดลอกอัตโนมัติ
-                coordBox.onclick = () => {
-                    navigator.clipboard.writeText(`data-position="${positionData}"`);
-                    const originalText = coordBox.innerText;
-                    
-                    // อัปเดต UI เมื่อคัดลอกสำเร็จ
-                    coordBox.innerText = "✅ คัดลอกพิกัดเรียบร้อยแล้ว!";
-                    coordBox.style.backgroundColor = "#ceead6";
-                    coordBox.style.borderColor = "#188038";
-                    coordBox.style.color = "#188038";
-                    
-                    // รีเซ็ต UI กลับไปสถานะเดิมหลัง 1.5 วินาที
-                    setTimeout(() => {
-                        coordBox.innerText = originalText;
-                        coordBox.style.backgroundColor = "#e8f0fe";
-                        coordBox.style.borderColor = "#1a73e8";
-                        coordBox.style.color = "#1a73e8";
-                    }, 1500);
-                };
-            } else {
-                coordBox.innerText = "ไม่ได้คลิกโดนชิ้นส่วนโมเดล ลองใหม่อีกครั้งครับ";
-                coordBox.onclick = null;
-            }
-        });
     </script>
 
 </body>
