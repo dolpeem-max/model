@@ -1,0 +1,277 @@
+!DOCTYPE html
+html lang=th
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    titleWebAR Plant Cell Explorertitle
+    
+    !-- เรียกใช้งานไลบรารี model-viewer --
+    script type=module src=httpsajax.googleapis.comajaxlibsmodel-viewer3.4.0model-viewer.min.jsscript
+    
+    style
+        body { 
+            margin 0; 
+            background-color #2b2b2b; 
+            font-family 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow hidden; 
+        }
+        
+        model-viewer {
+            width 100vw;
+            height 100vh;
+            --poster-color transparent;
+             ป้องกันหน้าเว็บเลื่อนเมื่อใช้นิ้วหมุนโมเดลบนมือถือหรือ iPad 
+            touch-action none; 
+        }
+
+         ปุ่ม AR ด้านล่าง 
+        #ar-button {
+            background-color #ffffff;
+            color #333;
+            border-radius 20px;
+            border none;
+            position absolute;
+            bottom 30px;
+            left 50%;
+            transform translateX(-50%);
+            padding 12px 24px;
+            font-size 16px;
+            font-weight bold;
+            box-shadow 0 4px 10px rgba(0,0,0,0.3);
+            cursor pointer;
+            z-index 10;
+        }
+
+         การตกแต่งปุ่มตัวเลข (Hotspot) 
+        .hotspot-btn {
+            background transparent;
+            border none;
+            cursor pointer;
+            position relative;
+        }
+
+        .hotspot-number {
+            background-color rgba(40, 40, 50, 0.9);
+            color white;
+            border 1px solid #aaa;
+            border-radius 50%;
+            width 28px;
+            height 28px;
+            display flex;
+            justify-content center;
+            align-items center;
+            font-size 12px;
+            font-weight bold;
+            box-shadow 0 2px 5px rgba(0,0,0,0.5);
+            transition all 0.2s ease;
+        }
+
+         กล่องคำอธิบายสีเข้ม (Annotation Box) 
+        .annotation-box {
+            background-color rgba(20, 20, 25, 0.95);
+            color white;
+            padding 15px;
+            border-radius 8px;
+            width 250px;  ขยายความกว้างเล็กน้อยเพื่อให้พอดีกับคำอธิบายยาว 
+            text-align left;
+            position absolute;
+            top 50%;
+            left 40px; 
+            transform translateY(-50%);
+            opacity 0;
+            visibility hidden;
+            transition opacity 0.3s ease, visibility 0.3s;
+            box-shadow 0 4px 15px rgba(0,0,0,0.6);
+            pointer-events none;
+            z-index 5;
+        }
+
+         เมื่อคลิก(active) หรือเอาเมาส์ชี้(hover) ให้โชว์กล่องข้อความ 
+        .hotspot-btnfocus .annotation-box,
+        .hotspot-btnhover .annotation-box,
+        .hotspot-btn.active .annotation-box {
+            opacity 1;
+            visibility visible;
+        }
+
+         การจัดรูปแบบข้อความ 3 บรรทัด 
+        .anno-name {
+            font-size 16px;
+            font-weight bold;
+            margin-bottom 8px;
+            color #ffffff;
+            border-bottom 1px solid #555;
+            padding-bottom 5px;
+        }
+        .anno-function {
+            font-size 13px;
+            font-weight bold;
+            color #4da6ff; 
+            margin-bottom 5px;
+        }
+        .anno-desc {
+            font-size 12px;
+            line-height 1.5;
+            color #dcdcdc;
+        }
+    style
+head
+body
+
+    !-- แก้ไขเพิ่ม scale และ ar-placement ลงใน model-viewer แล้ว --
+    model-viewer 
+        src=cell.glb 
+        alt=3D Plant Cell Model
+        camera-controls
+        auto-rotate
+        ar
+        ar-modes=webxr scene-viewer quick-look
+        ar-scale=auto
+        ar-placement=floor
+        bounds=tight
+        scale=0.002 0.002 0.002
+        shadow-intensity=1
+        
+        !-- 1. แวคิวโอลขนาดใหญ่ --
+        button slot=hotspot-vacuole class=hotspot-btn data-position=11.81 19.67 -66.23 data-normal=0 0 1
+            div class=hotspot-number1div
+            div class=annotation-box
+                div class=anno-nameแวคิวโอลขนาดใหญ่ (Central Vacuole)div
+                div class=anno-functionหน้าที่ กักเก็บน้ำ สารอาหาร และของเสียdiv
+                div class=anno-descถุงน้ำขนาดใหญ่สีฟ้า ที่กินพื้นที่เกือบครึ่งหนึ่งของเซลล์พืช ทำหน้าที่รักษาแรงดันเต่งให้น้ำในเซลล์สมดุล หากพืชขาดน้ำส่วนนี้จะหดตัวลงทำให้ใบไม้เหี่ยวเฉาdiv
+            div
+        button
+
+        !-- 2. นิวเคลียส --
+        button slot=hotspot-nucleus class=hotspot-btn data-position=69.09 -2.85 43.91 data-normal=0 1 0
+            div class=hotspot-number2div
+            div class=annotation-box
+                div class=anno-nameนิวเคลียส (Nucleus)div
+                div class=anno-functionหน้าที่ ศูนย์กลางควบคุมการทำงานและเก็บสารพันธุกรรมdiv
+                div class=anno-descโครงสร้างทรงกลมขนาดใหญ่ เป็นที่กักเก็บ DNA ทำหน้าที่เหมือนห้องผู้บริหารที่สั่งการทุกกิจกรรมของเซลล์ ตั้งแต่การสังเคราะห์โปรตีนไปจนถึงกระบวนการแบ่งเซลล์div
+            div
+        button
+
+        !-- 3. คลอโรพลาสต์ --
+        button slot=hotspot-chloroplast class=hotspot-btn data-position=-58.41 -11.22 60.29 data-normal=-1 0 0
+            div class=hotspot-number3div
+            div class=annotation-box
+                div class=anno-nameคลอโรพลาสต์ (Chloroplast)div
+                div class=anno-functionหน้าที่ สร้างอาหารผ่านกระบวนการสังเคราะห์ด้วยแสงdiv
+                div class=anno-descออร์แกเนลล์สีเขียว ที่มีรงควัตถุคลอโรฟิลล์อยู่ด้านใน ทำหน้าที่ดูดกลืนพลังงานแสงอาทิตย์มาเปลี่ยนคาร์บอนไดออกไซด์และน้ำให้เป็นน้ำตาลเพื่อเป็นอาหารdiv
+            div
+        button
+
+        !-- 4. กอลจิบอดี --
+        button slot=hotspot-golgi class=hotspot-btn data-position=150.63 26.53 -17.59 data-normal=0 1 0
+            div class=hotspot-number4div
+            div class=annotation-box
+                div class=anno-nameกอลจิบอดี (Golgi Apparatus)div
+                div class=anno-functionหน้าที่ เติมแต่ง บรรจุ และคัดแยกโปรตีนเพื่อส่งออกdiv
+                div class=anno-descกลุ่มถุงแบนสีน้ำเงินซ้อนกัน ทำหน้าที่รับโปรตีนมาปรับแต่งรูปร่าง ห่อหุ้มใส่เวสิเคิล และจัดส่งไปยังจุดหมายปลายทาง คล้ายกับแผนกแพ็กและกระจายสินค้าของเซลล์div
+            div
+        button
+
+        !-- 5. ไมโทคอนเดรีย --
+        button slot=hotspot-mitochondria class=hotspot-btn data-position=145.03 -10.81 55.82 data-normal=1 0 0
+            div class=hotspot-number5div
+            div class=annotation-box
+                div class=anno-nameไมโทคอนเดรีย (Mitochondria)div
+                div class=anno-functionหน้าที่ สร้างพลังงานให้แก่เซลล์div
+                div class=anno-descโครงสร้างรูปไข่สีส้ม ทำหน้าที่เผาผลาญสารอาหารร่วมกับแก๊สออกซิเจนให้กลายเป็นพลังงาน (ATP) เปรียบเสมือนโรงไฟฟ้าที่จ่ายไฟให้เซลล์ทำกิจกรรมต่างๆ ได้div
+            div
+        button
+
+        !-- 6. ผนังเซลล์ --
+        button slot=hotspot-cellwall class=hotspot-btn data-position=172.50 -39.25 -104.01 data-normal=-1 0 0
+            div class=hotspot-number6div
+            div class=annotation-box
+                div class=anno-nameผนังเซลล์ (Cell Wall)div
+                div class=anno-functionหน้าที่ ค้ำจุนโครงสร้างและรักษารูปทรงdiv
+                div class=anno-descโครงสร้างชั้นนอกสุดสีเขียว สร้างจากเซลลูโลส ทำหน้าที่เหมือนกำแพงป้องกันไม่ให้เซลล์แตกเมื่อมีน้ำออสโมซิสเข้ามา และทำให้เซลล์พืชมีรูปทรงเหลี่ยมคงที่div
+            div
+        button
+
+        !-- 7. ไซโทพลาซึม --
+        button slot=hotspot-cytoplasm class=hotspot-btn data-position=143.72 -20.75 -88.43 data-normal=0 1 0
+            div class=hotspot-number7div
+            div class=annotation-box
+                div class=anno-nameไซโทพลาซึม (Cytoplasm)div
+                div class=anno-functionหน้าที่ พื้นที่เกิดปฏิกิริยาเคมีและที่อยู่ของออร์แกเนลล์div
+                div class=anno-descของเหลวคล้ายเจล ที่กระจายอยู่เต็มเซลล์ ประกอบด้วยน้ำและสารละลาย เป็นเสมือนพื้นที่ว่างให้โครงสร้างอื่นๆ ลอยอยู่และดำเนินกระบวนการเคมีที่สำคัญต่อชีวิตdiv
+            div
+        button
+
+        !-- 8. ร่างแหเอนโดพลาซึม --
+        button slot=hotspot-er class=hotspot-btn data-position=31.07 -22.23 14.39 data-normal=1 0 0
+            div class=hotspot-number8div
+            div class=annotation-box
+                div class=anno-nameร่างแหเอนโดพลาซึม (Endoplasmic Reticulum)div
+                div class=anno-functionหน้าที่ สร้างและลำเลียงโปรตีนและลิพิดdiv
+                div class=anno-descโครงสร้างท่อพับซ้อนกันอยู่รอบนิวเคลียส มีทั้งแบบขรุขระที่มีไรโบโซมเกาะเพื่อสร้างโปรตีน และแบบเรียบที่ช่วยสร้างไขมันและขจัดสารพิษdiv
+            div
+        button
+
+        !-- 9. เยื่อหุ้มเซลล์ --
+        button slot=hotspot-membrane class=hotspot-btn data-position=-92.31 -21.03 -35.53 data-normal=-1 0 0
+            div class=hotspot-number9div
+            div class=annotation-box
+                div class=anno-nameเยื่อหุ้มเซลล์ (Cell Membrane)div
+                div class=anno-functionหน้าที่ ควบคุมการผ่านเข้าออกของสารdiv
+                div class=anno-descเยื่อบางๆ ที่อยู่ติดกับผนังเซลล์ด้านใน ทำหน้าที่เป็นเยื่อเลือกผ่าน คอยคัดกรองสารอาหารและของเสียเข้าออก เพื่อรักษาสมดุลสภาพแวดล้อมภายในเซลล์ไม่ให้เปลี่ยนแปลงฉับพลันdiv
+            div
+        button
+
+        !-- 10. ไรโบโซม --
+        button slot=hotspot-ribosome class=hotspot-btn data-position=41.06 -21.73 113.96 data-normal=0 -1 0
+            div class=hotspot-number10div
+            div class=annotation-box
+                div class=anno-nameไรโบโซม (Ribosome)div
+                div class=anno-functionหน้าที่ สังเคราะห์โปรตีนdiv
+                div class=anno-descเม็ดขนาดเล็กจิ๋วที่ลอยอยู่ในไซโทพลาซึมและเกาะบนร่างแหเอนโดพลาซึม ทำหน้าที่อ่านรหัสพันธุกรรมแล้วนำกรดอะมิโนมาประกอบเข้าด้วยกันเพื่อสร้างโปรตีนสำหรับใช้งานในเซลล์div
+            div
+        button
+
+        !-- ปุ่มสำหรับเข้าโหมด AR --
+        button slot=ar-button id=ar-button
+            👁️ ส่องเซลล์ทะลุจอ (AR Mode)
+        button
+        
+    model-viewer
+
+    !-- Script สำหรับแก้ไขปัญหาการแตะ (Touch) บนหน้าจอ iPad และมือถือ --
+    script
+        document.addEventListener(DOMContentLoaded, () = {
+            const hotspots = document.querySelectorAll('.hotspot-btn');
+            
+             เมื่อผู้เล่นใช้นิ้วแตะที่ปุ่มหมายเลข
+            hotspots.forEach(btn = {
+                btn.addEventListener('click', (e) = {
+                     ปิดกล่องข้อความอันอื่นทั้งหมดก่อน
+                    hotspots.forEach(otherBtn = {
+                        if (otherBtn !== btn) {
+                            otherBtn.classList.remove('active');
+                        }
+                    });
+                     สลับสถานะเปิดปิด กล่องข้อความที่ถูกกด
+                    btn.classList.toggle('active');
+                });
+            });
+
+             ปิดกล่องข้อความเมื่อคลิกพื้นที่ว่างบนโมเดล 3D
+            const viewer = document.querySelector('model-viewer');
+            viewer.addEventListener('mousedown', (e) = {
+                if (!e.target.closest('.hotspot-btn')) {
+                    hotspots.forEach(btn = btn.classList.remove('active'));
+                }
+            });
+            
+            viewer.addEventListener('touchstart', (e) = {
+                if (!e.target.closest('.hotspot-btn')) {
+                    hotspots.forEach(btn = btn.classList.remove('active'));
+                }
+            });
+        });
+    script
+body
+html
