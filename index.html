@@ -3,117 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR Animal Cell Explorer & Coordinate Picker</title>
+    <title>3D Cell Model Viewer - Coordinate Picker</title>
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
-        body { margin: 0; background-color: #121216; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; color: white; }
-        
-        model-viewer {
+        body {
+            margin: 0;
+            padding: 0;
             width: 100vw;
             height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0e5ec;
+        }
+
+        /* ตั้งค่าให้ตัวแสดงโมเดลเต็มหน้าจอ */
+        model-viewer {
+            width: 100%;
+            height: 100%;
             --poster-color: transparent;
         }
 
-        /* แผงควบคุมแสดงพิกัดด้านบน (สำหรับหาตำแหน่ง) */
-        #coord-panel {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(20, 20, 30, 0.9); border: 2px solid #ff33cc; padding: 12px 20px;
-            border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(255,51,204,0.3);
-            z-index: 100; pointer-events: none;
-        }
-        #coord-title { font-size: 13px; color: #888; margin-bottom: 3px; }
-        #coord-value { font-size: 18px; font-weight: bold; color: #ff33cc; font-family: monospace; }
-        #copy-status { font-size: 11px; color: #00ffcc; margin-top: 3px; height: 14px; }
-
-        /* ปุ่ม AR ด้านล่าง */
-        #ar-button {
-            background-color: #ffffff;
-            color: #333;
-            border-radius: 20px;
-            border: none;
+        /* การออกแบบกล่องข้อความแจ้งเตือนเมื่อคัดลอกสำเร็จ */
+        #toast {
             position: absolute;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
+            background: rgba(33, 33, 33, 0.9);
+            color: #ffffff;
             padding: 12px 24px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        #toast.show {
+            opacity: 1;
+            visibility: visible;
         }
 
-        /* เตรียม CSS สำหรับ Hotspot ของเซลล์สัตว์ในอนาคต */
-        .hotspot-btn {
-            background: transparent; border: none; cursor: pointer; position: relative;
+        /* กล่องแสดงคำแนะนำมุมซ้ายบน */
+        #instruction {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 10px 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 14px;
+            z-index: 10;
         }
-        .hotspot-number {
-            background-color: rgba(40, 40, 50, 0.9); color: white; border: 1px solid #aaa;
-            border-radius: 50%; width: 28px; height: 28px; display: flex;
-            justify-content: center; align-items: center; font-size: 12px;
-            font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.5); transition: all 0.2s ease;
-        }
-        .annotation-box {
-            background-color: rgba(20, 20, 25, 0.9); color: white; padding: 15px;
-            border-radius: 8px; width: 250px; text-align: left; position: absolute;
-            top: 50%; left: 40px; transform: translateY(-50%); opacity: 0;
-            visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6); pointer-events: none; z-index: 5;
-        }
-        .hotspot-btn:focus .annotation-box, .hotspot-btn:hover .annotation-box {
-            opacity: 1; visibility: visible;
-        }
-        .anno-name { font-size: 16px; font-weight: bold; margin-bottom: 8px; color: #ffffff; border-bottom: 1px solid #555; padding-bottom: 5px; }
-        .anno-function { font-size: 13px; font-weight: bold; color: #ff66b2; margin-bottom: 5px; }
-        .anno-desc { font-size: 12px; line-height: 1.5; color: #dcdcdc; }
     </style>
 </head>
 <body>
 
-    <div id="coord-panel">
-        <div id="coord-title">🎯 พิกัดจุดเซลล์สัตว์ (คัดลอกให้อัตโนมัติแล้ว)</div>
-        <div id="coord-value">คลิกซ้ายบนโมเดล 3D ได้เลย</div>
-        <div id="copy-status"></div>
+    <div id="instruction">
+        <strong>คู่มือ:</strong> คลิกซ้ายที่ส่วนใดๆ ของโมเดลเพื่อดูและคัดลอกพิกัด (X, Y, Z)
     </div>
 
     <model-viewer 
-        id="cell-model"
+        id="cell-viewer" 
         src="cell_2.glb" 
-        alt="3D Animal Cell Model"
-        camera-controls
-        auto-rotate
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        shadow-intensity="1">
-        
-        <button slot="ar-button" id="ar-button">
-            👁️ ส่องเซลล์ทะลุจอ (AR Mode)
-        </button>
-        
+        camera-controls 
+        shadow-intensity="1"
+        alt="3D model of a cell">
     </model-viewer>
 
-    <script>
-        const modelViewer = document.querySelector('#cell-model');
-        const coordValue = document.querySelector('#coord-value');
-        const copyStatus = document.querySelector('#copy-status');
+    <div id="toast">คัดลอกพิกัดแล้ว: <span id="coord-display"></span></div>
 
-        modelViewer.addEventListener('click', (event) => {
-            const hit = modelViewer.positionAndNormalFromPoint(event.clientX, event.clientY);
-            
-            if (hit) {
-                const x = hit.position.x.toFixed(2);
-                const y = hit.position.y.toFixed(2);
-                const z = hit.position.z.toFixed(2);
+    <script>
+        const viewer = document.querySelector('#cell-viewer');
+        const toast = document.querySelector('#toast');
+        const coordDisplay = document.querySelector('#coord-display');
+        let toastTimeout;
+
+        // ดักจับเหตุการณ์การคลิกเมาส์
+        viewer.addEventListener('click', (event) => {
+            // ใช้ฟังก์ชันของ model-viewer เพื่อหาจุดตัดบนโมเดล 3D จากตำแหน่งที่คลิกบนหน้าจอ
+            const hit = viewer.positionAndNormalFromPoint(event.clientX, event.clientY);
+
+            // ถ้าคลิกโดนโมเดล (ไม่โดนพื้นหลัง)
+            if (hit != null) {
+                // ดึงค่าแกน x, y, z และปัดเศษทศนิยม 4 ตำแหน่งเพื่อง่ายต่อการอ่าน
+                const x = hit.position.x.toFixed(4);
+                const y = hit.position.y.toFixed(4);
+                const z = hit.position.z.toFixed(4);
                 
-                const resultString = `data-position="${x} ${y} ${z}"`;
-                
-                coordValue.innerText = resultString;
-                
-                navigator.clipboard.writeText(resultString).then(() => {
-                    copyStatus.innerText = "📋 คัดลอกพิกัดเซลล์สัตว์เรียบร้อยแล้ว!";
-                    setTimeout(() => { copyStatus.innerText = ""; }, 3000);
+                // สร้างรูปแบบข้อความ "x, y, z"
+                const coordinateString = `${x}, ${y}, ${z}`;
+
+                // ใช้ Clipboard API เพื่อคัดลอกข้อความ
+                navigator.clipboard.writeText(coordinateString).then(() => {
+                    // แสดงผล Toast แจ้งเตือน
+                    coordDisplay.textContent = coordinateString;
+                    toast.classList.add('show');
+                    
+                    // ซ่อน Toast หลังจากผ่านไป 2.5 วินาที
+                    clearTimeout(toastTimeout);
+                    toastTimeout = setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 2500);
+                }).catch(err => {
+                    console.error('ไม่สามารถคัดลอกพิกัดได้: ', err);
                 });
             }
         });
