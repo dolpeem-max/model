@@ -66,6 +66,64 @@
         #coordinate-box:active {
             transform: scale(0.98);
         }
+
+        /* ตกแต่งปุ่ม Hotspot เบื้องต้น (ซ่อนรายละเอียดไว้ก่อนคลิก) */
+        .hotspot-btn {
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid #1a73e8;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .hotspot-number {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+
+        .annotation-box {
+            display: none; /* ซ่อนกล่องข้อความไว้ */
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            width: 250px;
+            text-align: left;
+            font-family: sans-serif;
+            pointer-events: none;
+        }
+
+        .hotspot-btn:focus .annotation-box,
+        .hotspot-btn:hover .annotation-box {
+            display: block; /* แสดงกล่องเมื่อชี้หรือคลิก */
+        }
+
+        .anno-name { font-weight: bold; margin-bottom: 5px; color: #333; }
+        .anno-function { font-size: 0.85em; color: #1a73e8; margin-bottom: 5px; }
+        .anno-desc { font-size: 0.8em; color: #666; }
+
+        #ar-button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -80,12 +138,13 @@
         ar-modes="webxr scene-viewer quick-look"
         shadow-intensity="1">
         
-        <button slot="hotspot-nucleus" class="hotspot-btn" data-position="69.09 -2.85 43.91" data-normal="0 1 0">
+        <!-- 1. แวคคิวโอล -->
+        <button slot="hotspot-vacuole" class="hotspot-btn" data-position="69.09 -2.85 43.91" data-normal="0 1 0">
             <div class="hotspot-number">6</div>
             <div class="annotation-box">
-                <div class="anno-name"> แวคคิวโอล (Vacuole)</div>
-                <div class="anno-function">หน้าที่: ศูนย์กลางควบคุมการทำงานและเก็บสารพันธุกรรม</div>
-                <div class="anno-desc">โครงสร้างทรงกลมขนาดใหญ่ เป็นที่กักเก็บ DNA ทำหน้าที่เหมือนห้องผู้บริหารที่สั่งการทุกกิจกรรมของเซลล์ ตั้งแต่การสังเคราะห์โปรตีนไปจนถึงกระบวนการแบ่งเซลล์</div>
+                <div class="anno-name">แวคคิวโอล (Vacuole)</div>
+                <div class="anno-function">หน้าที่: เก็บสะสมสารต่างๆ</div>
+                <div class="anno-desc">โครงสร้างทรงกลม เป็นที่กักเก็บน้ำ สารอาหาร และของเสียในเซลล์พืชจะมีขนาดใหญ่มาก</div>
             </div>
         </button>
         
@@ -93,48 +152,54 @@
         <button slot="hotspot-nucleus" class="hotspot-btn" data-position="69.09 -2.85 43.91" data-normal="0 1 0">
             <div class="hotspot-number">4</div>
             <div class="annotation-box">
-                <div class="anno-name"> นิวเคลียส (Nucleus)</div>
+                <div class="anno-name">นิวเคลียส (Nucleus)</div>
                 <div class="anno-function">หน้าที่: ศูนย์กลางควบคุมการทำงานและเก็บสารพันธุกรรม</div>
-                <div class="anno-desc">โครงสร้างทรงกลมขนาดใหญ่ เป็นที่กักเก็บ DNA ทำหน้าที่เหมือนห้องผู้บริหารที่สั่งการทุกกิจกรรมของเซลล์ ตั้งแต่การสังเคราะห์โปรตีนไปจนถึงกระบวนการแบ่งเซลล์</div>
+                <div class="anno-desc">โครงสร้างทรงกลมขนาดใหญ่ เป็นที่กักเก็บ DNA ทำหน้าที่เหมือนห้องผู้บริหารที่สั่งการทุกกิจกรรมของเซลล์</div>
             </div>
         </button>
 
-        <!-- 5. ไมโทคอนเดรีย -->
+        <!-- 3. ไมโทคอนเดรีย -->
         <button slot="hotspot-mitochondria" class="hotspot-btn" data-position="145.03 -10.81 55.82" data-normal="1 0 0">
             <div class="hotspot-number">5</div>
             <div class="annotation-box">
                 <div class="anno-name">ไมโทคอนเดรีย (Mitochondria)</div>
                 <div class="anno-function">หน้าที่: สร้างพลังงานให้แก่เซลล์</div>
-                <div class="anno-desc">โครงสร้างรูปไข่สีส้ม ทำหน้าที่เผาผลาญสารอาหารร่วมกับแก๊สออกซิเจนให้กลายเป็นพลังงาน (ATP) เปรียบเสมือนโรงไฟฟ้าที่จ่ายไฟให้เซลล์ทำกิจกรรมต่างๆ ได้</div>
+                <div class="anno-desc">โครงสร้างรูปไข่สีส้ม ทำหน้าที่เผาผลาญสารอาหารร่วมกับแก๊สออกซิเจนให้กลายเป็นพลังงาน (ATP)</div>
             </div>
         </button>
 
-        <!-- 7. ไซโทพลาซึม -->
+        <!-- 4. ไซโทพลาซึม -->
         <button slot="hotspot-cytoplasm" class="hotspot-btn" data-position="143.72 -20.75 -88.43" data-normal="0 1 0">
             <div class="hotspot-number">3</div>
             <div class="annotation-box">
                 <div class="anno-name">ไซโทพลาซึม (Cytoplasm)</div>
                 <div class="anno-function">หน้าที่: พื้นที่เกิดปฏิกิริยาเคมีและที่อยู่ของออร์แกเนลล์</div>
-                <div class="anno-desc">ของเหลวคล้ายเจล ที่กระจายอยู่เต็มเซลล์ ประกอบด้วยน้ำและสารละลาย เป็นเสมือนพื้นที่ว่างให้โครงสร้างอื่นๆ ลอยอยู่และดำเนินกระบวนการเคมีที่สำคัญต่อชีวิต</div>
+                <div class="anno-desc">ของเหลวคล้ายเจล ที่กระจายอยู่เต็มเซลล์ ประกอบด้วยน้ำและสารละลาย</div>
             </div>
         </button>
 
-        <!-- 9. เยื่อหุ้มเซลล์ (สมมติเป็นหมายเลข 20 เพื่อให้เข้ากับระบบ UI) -->
+        <!-- 5. เยื่อหุ้มเซลล์ -->
         <button slot="hotspot-membrane" class="hotspot-btn" data-position="-92.31 -21.03 -35.53" data-normal="-1 0 0">
             <div class="hotspot-number">2</div>
             <div class="annotation-box">
                 <div class="anno-name">เยื่อหุ้มเซลล์ (Cell Membrane)</div>
                 <div class="anno-function">หน้าที่: ควบคุมการผ่านเข้าออกของสาร</div>
-                <div class="anno-desc">เยื่อบางๆ ที่อยู่ติดกับผนังเซลล์ด้านใน ทำหน้าที่เป็นเยื่อเลือกผ่าน คอยคัดกรองสารอาหารและของเสียเข้าออก เพื่อรักษาสมดุลสภาพแวดล้อมภายในเซลล์ไม่ให้เปลี่ยนแปลงฉับพลัน</div>
+                <div class="anno-desc">เยื่อบางๆ ที่อยู่ติดกับผนังเซลล์ด้านใน ทำหน้าที่เป็นเยื่อเลือกผ่าน คอยคัดกรองสารอาหารและของเสียเข้าออก</div>
             </div>
         </button>
 
          <button slot="ar-button" id="ar-button">
             👁️ ส่องเซลล์ทะลุจอ (AR Mode)
         </button>
+    </model-viewer>
+
+    <!-- แผงควบคุมและแสดงผลด้านล่าง (ส่วนที่ถูกเพิ่มเข้ามาเพื่อให้ UI สมบูรณ์) -->
+    <div class="panel">
+        <div class="instruction">คลิกที่ส่วนต่างๆ ของโมเดลเพื่อดูพิกัด (คลิกที่กล่องเพื่อคัดลอก)</div>
+        <div id="coordinate-box">รอการคลิกบนโมเดล...</div>
     </div>
 
-    <!-- โค้ดประมวลผล -->
+    <!-- โค้ดประมวลผล JavaScript -->
     <script>
         const modelViewer = document.querySelector('#cell-model');
         const coordBox = document.querySelector('#coordinate-box');
@@ -162,11 +227,14 @@
                 coordBox.onclick = () => {
                     navigator.clipboard.writeText(`data-position="${positionData}"`);
                     const originalText = coordBox.innerText;
+                    
+                    // อัปเดต UI เมื่อคัดลอกสำเร็จ
                     coordBox.innerText = "✅ คัดลอกพิกัดเรียบร้อยแล้ว!";
                     coordBox.style.backgroundColor = "#ceead6";
                     coordBox.style.borderColor = "#188038";
                     coordBox.style.color = "#188038";
                     
+                    // รีเซ็ต UI กลับไปสถานะเดิมหลัง 1.5 วินาที
                     setTimeout(() => {
                         coordBox.innerText = originalText;
                         coordBox.style.backgroundColor = "#e8f0fe";
