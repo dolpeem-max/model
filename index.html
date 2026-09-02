@@ -74,21 +74,64 @@
     <model-viewer 
         id="cell-model" 
         src="scene.gltf" 
-        camera-controls 
+        camera-controls
         auto-rotate
+        ar
+        ar-modes="webxr scene-viewer quick-look"
         shadow-intensity="1">
-    </model-viewer>
-
-    <!-- ส่วนแสดงพิกัด -->
-    <div class="panel">
-        <div class="instruction">
-            <b>วิธีใช้งาน:</b> หมุน/ซูม โมเดลเพื่อหาจุดที่ต้องการ จากนั้นคลิกที่ชิ้นส่วนนั้นๆ <br>
-            พิกัด X Y Z จะปรากฏขึ้นด้านล่าง (คลิกที่กล่องสีฟ้าเพื่อคัดลอกทันที)
-        </div>
         
-        <div id="coordinate-box" title="คลิกเพื่อคัดลอก">
-            รอการคลิกที่โมเดล...
-        </div>
+        <button slot="hotspot-nucleus" class="hotspot-btn" data-position="69.09 -2.85 43.91" data-normal="0 1 0">
+            <div class="hotspot-number">6</div>
+            <div class="annotation-box">
+                <div class="anno-name"> แวคคิวโอล (Vacuole)</div>
+                <div class="anno-function">หน้าที่: ศูนย์กลางควบคุมการทำงานและเก็บสารพันธุกรรม</div>
+                <div class="anno-desc">โครงสร้างทรงกลมขนาดใหญ่ เป็นที่กักเก็บ DNA ทำหน้าที่เหมือนห้องผู้บริหารที่สั่งการทุกกิจกรรมของเซลล์ ตั้งแต่การสังเคราะห์โปรตีนไปจนถึงกระบวนการแบ่งเซลล์</div>
+            </div>
+        </button>
+        
+        <!-- 2. นิวเคลียส -->
+        <button slot="hotspot-nucleus" class="hotspot-btn" data-position="69.09 -2.85 43.91" data-normal="0 1 0">
+            <div class="hotspot-number">4</div>
+            <div class="annotation-box">
+                <div class="anno-name"> นิวเคลียส (Nucleus)</div>
+                <div class="anno-function">หน้าที่: ศูนย์กลางควบคุมการทำงานและเก็บสารพันธุกรรม</div>
+                <div class="anno-desc">โครงสร้างทรงกลมขนาดใหญ่ เป็นที่กักเก็บ DNA ทำหน้าที่เหมือนห้องผู้บริหารที่สั่งการทุกกิจกรรมของเซลล์ ตั้งแต่การสังเคราะห์โปรตีนไปจนถึงกระบวนการแบ่งเซลล์</div>
+            </div>
+        </button>
+
+        <!-- 5. ไมโทคอนเดรีย -->
+        <button slot="hotspot-mitochondria" class="hotspot-btn" data-position="145.03 -10.81 55.82" data-normal="1 0 0">
+            <div class="hotspot-number">5</div>
+            <div class="annotation-box">
+                <div class="anno-name">ไมโทคอนเดรีย (Mitochondria)</div>
+                <div class="anno-function">หน้าที่: สร้างพลังงานให้แก่เซลล์</div>
+                <div class="anno-desc">โครงสร้างรูปไข่สีส้ม ทำหน้าที่เผาผลาญสารอาหารร่วมกับแก๊สออกซิเจนให้กลายเป็นพลังงาน (ATP) เปรียบเสมือนโรงไฟฟ้าที่จ่ายไฟให้เซลล์ทำกิจกรรมต่างๆ ได้</div>
+            </div>
+        </button>
+
+        <!-- 7. ไซโทพลาซึม -->
+        <button slot="hotspot-cytoplasm" class="hotspot-btn" data-position="143.72 -20.75 -88.43" data-normal="0 1 0">
+            <div class="hotspot-number">3</div>
+            <div class="annotation-box">
+                <div class="anno-name">ไซโทพลาซึม (Cytoplasm)</div>
+                <div class="anno-function">หน้าที่: พื้นที่เกิดปฏิกิริยาเคมีและที่อยู่ของออร์แกเนลล์</div>
+                <div class="anno-desc">ของเหลวคล้ายเจล ที่กระจายอยู่เต็มเซลล์ ประกอบด้วยน้ำและสารละลาย เป็นเสมือนพื้นที่ว่างให้โครงสร้างอื่นๆ ลอยอยู่และดำเนินกระบวนการเคมีที่สำคัญต่อชีวิต</div>
+            </div>
+        </button>
+
+        <!-- 9. เยื่อหุ้มเซลล์ (สมมติเป็นหมายเลข 20 เพื่อให้เข้ากับระบบ UI) -->
+        <button slot="hotspot-membrane" class="hotspot-btn" data-position="-92.31 -21.03 -35.53" data-normal="-1 0 0">
+            <div class="hotspot-number">2</div>
+            <div class="annotation-box">
+                <div class="anno-name">เยื่อหุ้มเซลล์ (Cell Membrane)</div>
+                <div class="anno-function">หน้าที่: ควบคุมการผ่านเข้าออกของสาร</div>
+                <div class="anno-desc">เยื่อบางๆ ที่อยู่ติดกับผนังเซลล์ด้านใน ทำหน้าที่เป็นเยื่อเลือกผ่าน คอยคัดกรองสารอาหารและของเสียเข้าออก เพื่อรักษาสมดุลสภาพแวดล้อมภายในเซลล์ไม่ให้เปลี่ยนแปลงฉับพลัน</div>
+            </div>
+        </button>
+
+         <button slot="ar-button" id="ar-button">
+            👁️ ส่องเซลล์ทะลุจอ (AR Mode)
+        </button>
     </div>
 
     <!-- โค้ดประมวลผล -->
